@@ -1,29 +1,67 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Router from 'vue-router'
+import Dashboard from '@/components/Dashboard'
+import Login from '@/views/Login'
+import Products from '@/views/Products'
+import Coupons from '@/views/Coupons'
+import CustomerOrder from '@/views/CustomerOrders'
+import CustomerCheckout from '@/views/CustomerCheckout'
+import Orders from '@/views/Orders'
 
-Vue.use(VueRouter)
+Vue.use(Router)
 
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
-
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+export default new Router({
+  routes: [
+    {
+      path: '*',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/admin',
+      name: 'Dashboard',
+      component: Dashboard,
+      children: [
+        {
+          path: 'products',
+          name: 'Products',
+          component: Products,
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'coupons',
+          name: 'Coupons',
+          component: Coupons,
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'orders',
+          name: 'Orders',
+          component: Orders,
+          meta: { requiresAuth: true }
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'Dashboard',
+      component: Dashboard,
+      children: [
+        {
+          path: 'customer_order',
+          name: CustomerOrder,
+          component: CustomerOrder
+        },
+        {
+          path: 'customer_checkout/:orderId',
+          name: CustomerCheckout,
+          component: CustomerCheckout
+        }
+      ]
+    }
+  ]
 })
-
-export default router
